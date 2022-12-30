@@ -17,10 +17,11 @@
 
 #define	ET_NONE	0	//No file type 
 #define	ET_REL	1	//Relocatable file 
-#define	ET_EXEC	2	//Executable file 
-#define	ET_DYN	3	//Shared object file 
-#define	ET_CORE	4	//Core file 
+#define	ET_EXEC	2	//Executable file
+#define ET_DYN 3	// Shared object file
+#define ET_CORE 4	// Core file
 
+#define STB_GLOBAL 1
 
 /* symbol_name		- The symbol (maybe function) we need to search for.
  * exe_file_name	- The file where we search the symbol in.
@@ -31,8 +32,8 @@
  * 			- If -4: The symbol was found, it is global, but it is not defined in the executable.
  * return value		- The address which the symbol_name will be loaded to, if the symbol was found and is global.
  */
-unsigned long find_symbol(char* symbol_name, char* exe_file_name, int* error_val) {
-	// TODO: Implement.
+unsigned long find_symbol(char *symbol_name, char *exe_file_name, int *error_val)
+{
 	FILE *fptr = fopen(exe_file_name, "r");
 	if (fptr == NULL)
 	{
@@ -90,7 +91,6 @@ unsigned long find_symbol(char* symbol_name, char* exe_file_name, int* error_val
 
 	for (int i = 0; i < symtab.sh_size / sizeof(Elf64_Sym); i++)
 	{
-		// printf("%s, %d", strtab_buf + symtab_buf[i].st_name, symtab_buf[i].st_shndx);
 		if (strcmp(strtab_buf + symtab_buf[i].st_name, symbol_name) == 0)
 		{
 			sym = symtab_buf[i];
@@ -106,7 +106,7 @@ unsigned long find_symbol(char* symbol_name, char* exe_file_name, int* error_val
 
 	// if local symbol
 	printf("%d", ELF64_ST_BIND(sym.st_info));
-	if (ELF64_ST_BIND(sym.st_info) != 1) // STB_GLOBAL)
+	if (ELF64_ST_BIND(sym.st_info) != STB_GLOBAL)
 	{
 		*error_val = -2;
 		return 0;
